@@ -105,11 +105,14 @@ function render() {
   elements.expenseSum.textContent = `${expense.toFixed(2)} ₽`;
   elements.balance.textContent = `${(income - expense).toFixed(2)} ₽`;
 
-  renderChart('income-chart', incomeData, 'green', incomeChart, c => incomeChart = c);
-  renderChart('expense-chart', expenseData, 'red', expenseChart, c => expenseChart = c);
+  const incomeGrouped = groupSmallValuesWithMinPercent(incomeData, 0.5);
+  const expenseGrouped = groupSmallValuesWithMinPercent(expenseData, 0.5);
+
+  renderChart('income-chart', incomeGrouped.groupedData, 'green', incomeChart, c => incomeChart = c, incomeGrouped.othersSum, incomeGrouped.total, incomeData);
+  renderChart('expense-chart', expenseGrouped.groupedData, 'red', expenseChart, c => expenseChart = c, expenseGrouped.othersSum, expenseGrouped.total, expenseData);
 }
 
-function renderChart(id, data, _, chartRef, setChart) {
+function renderChart(id, data, _, chartRef, setChart, othersSum = 0, total = 0, realData = {}) {
   const ctx = document.getElementById(id);
   if (chartRef) chartRef.destroy();
 
@@ -126,7 +129,20 @@ function renderChart(id, data, _, chartRef, setChart) {
     },
     options: {
       plugins: {
-        legend: { position: 'bottom' }
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              if (label === 'Другие') {
+                return `${label}: ${othersSum.toFixed(2)} ₽`;
+              } else {
+                const value = realData[label] !== undefined ? realData[label] : context.parsed;
+                return `${label}: ${value.toFixed(2)} ₽`;
+              }
+            }
+          }
+        }
       }
     }
   }));
@@ -156,6 +172,29 @@ function clearAll() {
 function saveAndRender() {
   localStorage.setItem('transactions', JSON.stringify(transactions));
   render();
+}
+
+function groupSmallValuesWithMinPercent(data, minPercent = 0.5) {
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+
+  let othersSum = 0;
+  const grouped = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (value < 100) {
+      othersSum += value;
+    } else {
+      grouped[key] = value;
+    }
+  }
+
+  if (othersSum > 0) {
+    const minValueForPercent = total * (minPercent / 100);
+    const displayedValue = Math.max(othersSum, minValueForPercent);
+    grouped['Другие'] = displayedValue;
+  }
+
+  return { groupedData: grouped, othersSum, total };
 }
 
 render();
