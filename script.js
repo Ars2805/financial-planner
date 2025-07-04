@@ -30,12 +30,18 @@ function addTransaction(e) {
   e.preventDefault();
 
   const title = elements.title.value.trim();
-  const amount = parseFloat(elements.amount.value);
+  let rawAmount = elements.amount.value.trim().replace(',', '.');
+
+  if (/^0\d+/.test(rawAmount)) {
+    rawAmount = rawAmount.replace(/^0+/, '');
+  }
+
+  const amount = parseFloat(rawAmount);
   const type = elements.type.value;
   const date = elements.date.value;
 
-  if (!title || !amount || !type || !date || amount <= 0) {
-    alert('Пожалуйста, заполните все поля корректно.');
+  if (!title || !type || !date || isNaN(amount) || amount <= 0) {
+    alert('Пожалуйста, введите корректную сумму (например, 0.50 или 1.00).');
     return;
   }
 
