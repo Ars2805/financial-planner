@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Финансовый планировщик</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Финансовый планировщик</h1>
+    <div id="balance">
+      Баланс: <span id="total-balance">0 ₽</span>
+    </div>
+  </header>
+
+  <section id="form-section">
+    <form id="transaction-form">
+      <input type="text" id="title" placeholder="Название" required />
+      <input type="number" id="amount" placeholder="Сумма" required min="0.01" step="0.01" />
+      <select id="type" required>
+        <option value="">Тип</option>
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+      <input type="date" id="date" required />
+      <button type="submit">Добавить</button>
+    </form>
+  </section>
+
+  <section id="filters">
+    <select id="filter-type">
+      <option value="all">Все</option>
+      <option value="income">Доходы</option>
+      <option value="expense">Расходы</option>
+    </select>
+    <input type="text" id="search" placeholder="Поиск по названию" />
+    <input type="month" id="filter-date" />
+  </section>
+
+  <section id="summary">
+    <p>Доходы: <span id="income-sum">0 ₽</span></p>
+    <p>Расходы: <span id="expense-sum">0 ₽</span></p>
+  </section>
+
+  <section id="transactions">
+    <div class="columns">
+      <div class="column">
+        <h2>Доходы</h2>
+        <ul id="income-list"></ul>
+        <canvas id="income-chart"></canvas>
+      </div>
+      <div class="column">
+        <h2>Расходы</h2>
+        <ul id="expense-list"></ul>
+        <canvas id="expense-chart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <button id="clear-all">Очистить все данные</button>
+
+  <canvas id="chart" style="max-width: 400px; margin: auto;"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

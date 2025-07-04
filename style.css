@@ -1,0 +1,63 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 1rem;
+  background: #f5f5f5;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#transaction-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  margin: 0.3rem 0;
+  border-radius: 5px;
+  background: white;
+}
+
+.income {
+  border-left: 5px solid green;
+}
+
+.expense {
+  border-left: 5px solid red;
+}
+
+form, #filters, #summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input, select, button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.columns {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.column {
+  flex: 1 1 300px;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.column h2 {
+  text-align: center;
+}
+
+canvas {
+  max-width: 100%;
+  margin-top: 1rem;
+}
