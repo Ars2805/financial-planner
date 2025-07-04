@@ -14,7 +14,8 @@ const elements = {
   filterType: document.getElementById('filter-type'),
   search: document.getElementById('search'),
   filterDate: document.getElementById('filter-date'),
-  clearAll: document.getElementById('clear-all')
+  clearAll: document.getElementById('clear-all'),
+  themeToggle: document.getElementById('toggle-theme'),
 };
 
 let incomeChart = null;
@@ -25,6 +26,7 @@ elements.clearAll.addEventListener('click', clearAll);
 elements.filterType.addEventListener('change', render);
 elements.search.addEventListener('input', render);
 elements.filterDate.addEventListener('change', render);
+elements.themeToggle.addEventListener('click', toggleTheme);
 
 function addTransaction(e) {
   e.preventDefault();
@@ -50,7 +52,7 @@ function addTransaction(e) {
     title,
     amount,
     type,
-    date
+    date,
   };
 
   transactions.push(transaction);
@@ -61,12 +63,9 @@ function addTransaction(e) {
 function render() {
   const filtered = transactions
     .filter(t => {
-      const typeMatch =
-        elements.filterType.value === 'all' || t.type === elements.filterType.value;
+      const typeMatch = elements.filterType.value === 'all' || t.type === elements.filterType.value;
       const searchMatch = t.title.toLowerCase().includes(elements.search.value.toLowerCase());
-      const dateMatch = elements.filterDate.value
-        ? t.date.startsWith(elements.filterDate.value)
-        : true;
+      const dateMatch = elements.filterDate.value ? t.date.startsWith(elements.filterDate.value) : true;
       return typeMatch && searchMatch && dateMatch;
     })
     .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -84,7 +83,6 @@ function render() {
     const [year, month, day] = isoDate.split("-");
     return `${day}.${month}.${year}`;
   }
-
 
   filtered.forEach(t => {
     const li = document.createElement('li');
@@ -114,13 +112,17 @@ function render() {
   const incomeGrouped = groupSmallValuesWithMinPercent(incomeData, 0.5);
   const expenseGrouped = groupSmallValuesWithMinPercent(expenseData, 0.5);
 
-  renderChart('income-chart', incomeGrouped.groupedData, 'green', incomeChart, c => incomeChart = c, incomeGrouped.othersSum, incomeGrouped.total, incomeData);
-  renderChart('expense-chart', expenseGrouped.groupedData, 'red', expenseChart, c => expenseChart = c, expenseGrouped.othersSum, expenseGrouped.total, expenseData);
+  renderChart('income-chart', incomeGrouped.groupedData, incomeChart, c => incomeChart = c, incomeGrouped.othersSum, incomeGrouped.total, incomeData);
+  renderChart('expense-chart', expenseGrouped.groupedData, expenseChart, c => expenseChart = c, expenseGrouped.othersSum, expenseGrouped.total, expenseData);
 }
 
-function renderChart(id, data, _, chartRef, setChart, othersSum = 0, total = 0, realData = {}) {
+function renderChart(id, data, chartRef, setChart, othersSum = 0, total = 0, realData = {}) {
   const ctx = document.getElementById(id);
   if (chartRef) chartRef.destroy();
+
+  const isDark = document.body.classList.contains('dark');
+  const textColor = isDark ? '#eee' : '#333';
+  const borderColor = isDark ? '#555' : '#ccc';
 
   const colors = generateColors(Object.keys(data).length);
 
@@ -130,15 +132,22 @@ function renderChart(id, data, _, chartRef, setChart, othersSum = 0, total = 0, 
       labels: Object.keys(data),
       datasets: [{
         data: Object.values(data),
-        backgroundColor: colors
+        backgroundColor: colors,
+        borderColor: borderColor,
+        borderWidth: 1.5,
       }]
     },
     options: {
       plugins: {
-        legend: { position: 'bottom' },
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: textColor
+          }
+        },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               const label = context.label || '';
               if (label === 'Другие') {
                 return `${label}: ${othersSum.toFixed(2)} ₽`;
@@ -202,5 +211,24 @@ function groupSmallValuesWithMinPercent(data, minPercent = 0.5) {
 
   return { groupedData: grouped, othersSum, total };
 }
+
+function toggleTheme() {
+  const body = document.body;
+  const isDark = body.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  elements.themeToggle.textContent = isDark ? '☀️ Тема' : '🌙 Тема';
+  render();
+}
+
+// При загрузке установить сохранённую тему и иконку
+(function initTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+    elements.themeToggle.textContent = '☀️ Тема';
+  } else {
+    elements.themeToggle.textContent = '🌙 Тема';
+  }
+})();
 
 render();

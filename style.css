@@ -168,3 +168,72 @@ canvas {
   margin-bottom: 25px;
   font-size: 1.1rem; 
 }
+
+body.dark {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+body.dark header,
+body.dark form,
+body.dark #balance,
+body.dark .column,
+body.dark #filters {
+  background-color: #2b2b2b;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+body.dark form input,
+body.dark form select,
+body.dark #filters input,
+body.dark #filters select {
+  background-color: #3a3a3a;
+  color: #fff;
+  border-color: #555;
+}
+
+body.dark ul li {
+  border-bottom-color: #444;
+}
+
+body.dark #clear-all {
+  background-color: #bb2d3b;
+}
+
+body.dark #clear-all:hover {
+  background-color: #a71d2a;
+}
+
+#toggle-theme {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: #222;
+  transition: color 0.3s;
+}
+
+body.dark #toggle-theme {
+  color: #eee;
+  border-color: #666;
+}
+
+.column h2 {
+  transition: color 0.3s;
+}
+
+body.dark .column h2 {
+  color: #ddd;
+}
+
+/* ДОБАВЛЕНО: стили заголовка и h1 */
+header h1 {
+  color: #222;
+  transition: color 0.3s;
+}
+
+body.dark header h1 {
+  color: #eee;
+}
